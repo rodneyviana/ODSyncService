@@ -20,7 +20,10 @@ namespace TestConsole
 
             
              var statuses = os.GetStatus();
-             Console.WriteLine("Status = {0} Path = {1}", statuses[0].Status, statuses[0].LocalPath);
+            Console.WriteLine("======================================================");
+            Console.WriteLine();
+             foreach(var status in statuses)
+                Console.WriteLine("{2} - Status = {0} Path = {1}", status.StatusString, status.LocalPath, status.ServiceType);
 
             try
             {

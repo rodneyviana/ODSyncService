@@ -14,13 +14,6 @@ namespace OdSyncService
         [OperationContract]
         StatusDetailCollection GetStatus();
 
-
-        [OperationContract]
-        StatusDetail GetOneDetail();
-
-        [OperationContract]
-        int GetNumber();
-
     }
 
     [DataContract]
@@ -48,20 +41,28 @@ namespace OdSyncService
         [DataMember]
         public string UserName;
 
+
         internal ServiceStatus Status;
+
+        internal string statusString;
+
+        [DataMember]
+        public string ServiceType;
 
         [DataMember]
         public string StatusString
         {
             get
             {
-                return Status.ToString();
+                return statusString;
+                //return Status.ToString();
             }
             set
             {
                 try
                 {
-                    Status = (ServiceStatus)Enum.Parse(typeof(ServiceStatus), value, false);
+                    statusString = value;
+                    //Status = (ServiceStatus)Enum.Parse(typeof(ServiceStatus), value, false);
                 }
                 catch
                 {
@@ -69,6 +70,7 @@ namespace OdSyncService
                 }
             }
         }
+
     }
 
     [CollectionDataContract]

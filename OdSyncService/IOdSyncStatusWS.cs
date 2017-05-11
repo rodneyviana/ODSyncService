@@ -47,6 +47,9 @@ namespace OdSyncService
         internal string statusString;
 
         [DataMember]
+        public string ServiceType;
+
+        [DataMember]
         public string StatusString
         {
             get
