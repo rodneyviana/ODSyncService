@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OdSyncStatusWS" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="pipeBinding_IOdSyncStatusWS_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1">
+        </msb:BinaryEncoding>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <msf:WindowsTransportSecurity xmlns:msf="http://schemas.microsoft.com/ws/2006/05/framing/policy">
+                  <msf:ProtectionLevel>EncryptAndSign</msf:ProtectionLevel>
+                </msf:WindowsTransportSecurity>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256>
+                </sp:Basic256>
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict>
+                </sp:Strict>
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <wsaw:UsingAddressing>
+        </wsaw:UsingAddressing>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import namespace="http://tempuri.org/" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/OdSyncService" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IOdSyncStatusWS_GetStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatus" />
+  </wsdl:message>
+  <wsdl:message name="IOdSyncStatusWS_GetStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOdSyncStatusWS_GetOneDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetOneDetail" />
+  </wsdl:message>
+  <wsdl:message name="IOdSyncStatusWS_GetOneDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetOneDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IOdSyncStatusWS_GetNumber_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetNumber" />
+  </wsdl:message>
+  <wsdl:message name="IOdSyncStatusWS_GetNumber_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetNumberResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IOdSyncStatusWS">
+    <wsdl:operation name="GetStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/IOdSyncStatusWS/GetStatus" message="tns:IOdSyncStatusWS_GetStatus_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IOdSyncStatusWS/GetStatusResponse" message="tns:IOdSyncStatusWS_GetStatus_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOneDetail">
+      <wsdl:input wsaw:Action="http://tempuri.org/IOdSyncStatusWS/GetOneDetail" message="tns:IOdSyncStatusWS_GetOneDetail_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IOdSyncStatusWS/GetOneDetailResponse" message="tns:IOdSyncStatusWS_GetOneDetail_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNumber">
+      <wsdl:input wsaw:Action="http://tempuri.org/IOdSyncStatusWS/GetNumber" message="tns:IOdSyncStatusWS_GetNumber_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IOdSyncStatusWS/GetNumberResponse" message="tns:IOdSyncStatusWS_GetNumber_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="pipeBinding_IOdSyncStatusWS" type="tns:IOdSyncStatusWS">
+    <wsp:PolicyReference URI="#pipeBinding_IOdSyncStatusWS_policy">
+    </wsp:PolicyReference>
+    <soap12:binding transport="http://schemas.microsoft.com/soap/named-pipe" />
+    <wsdl:operation name="GetStatus">
+      <soap12:operation soapAction="http://tempuri.org/IOdSyncStatusWS/GetStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOneDetail">
+      <soap12:operation soapAction="http://tempuri.org/IOdSyncStatusWS/GetOneDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNumber">
+      <soap12:operation soapAction="http://tempuri.org/IOdSyncStatusWS/GetNumber" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OdSyncStatusWS">
+    <wsdl:port name="pipeBinding_IOdSyncStatusWS" binding="tns:pipeBinding_IOdSyncStatusWS">
+      <soap12:address location="net.pipe://localhost/IOdSyncStatusWS/" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.pipe://localhost/IOdSyncStatusWS/</wsa10:Address>
+        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+          <Upn>rviana@northamerica.corp.microsoft.com</Upn>
+        </Identity>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
