@@ -8,14 +8,14 @@ using System.Security.Principal;
 using System.ServiceModel;
 using System.Text;
 using Native;
-using FileSyncLibrary;
+//using FileSyncLibrary;
 
 namespace OdSyncService
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "OdSyncStatusWS" in both code and config file together.
     public class OdSyncStatusWS : IOdSyncStatusWS
     {
-
+        /*
         public string GetSystemStatus(string Path)
         {
             try
@@ -26,12 +26,15 @@ namespace OdSyncService
 
                 fs.GetItemStatus(Path, out status);
                 return status.ToString();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return String.Format("Error: {0}: {1}", ex.GetType().ToString(), ex.Message);
             }
-            
+
         }
+        */
+
         public ServiceStatus GetStatus(string Path)
         {
 
@@ -139,6 +142,18 @@ namespace OdSyncService
                                         string userName = id.Translate(typeof(NTAccount)).Value;
                                         detail.UserName = userName;
                                         detail.UserSID = valueName;
+
+
+                                        string[] parts = userKey.Name.Split('!');
+
+                                        if (parts.Length > 1)
+                                        {
+                                            detail.ServiceType = parts[Math.Min(2, parts.Length - 1)].Split('|')[0];
+                                        }
+                                        else
+                                        {
+                                            detail.ServiceType = "INVALID";
+                                        }
                                     }
                                     catch (Exception ex)
                                     {
@@ -146,7 +161,7 @@ namespace OdSyncService
                                             ex.Message);
                                     }
                                     detail.LocalPath = userKey.GetValue(valueName) as string;
-                                    detail.StatusString = GetSystemStatus(detail.LocalPath);
+                                    detail.StatusString = GetStatus(detail.LocalPath).ToString();
                                     yield return detail;
                                 }
                             }
