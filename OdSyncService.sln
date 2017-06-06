@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdSyncService", "OdSyncService\OdSyncService.csproj", "{F55BC23A-4CB5-461E-BAB5-114B2D95440F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{4D234C53-B2D1-4522-AC74-2A6649CEB192}"
@@ -10,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestService", "TestService\TestService.csproj", "{9C76EAC2-2C83-4C5B-8FF5-1F06EE922135}"
 EndProject
 Project("{6141683F-8A12-4E36-9623-2EB02B2C2303}") = "SetupOdSyncService", "SetupOdSyncService\SetupOdSyncService.isproj", "{76FD32F3-0653-44C5-BA12-E19E34E00AB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneDriveLib", "OneDriveLib\OneDriveLib.csproj", "{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -259,6 +263,56 @@ Global
 		{76FD32F3-0653-44C5-BA12-E19E34E00AB8}.SingleImage|x64.Build.0 = SingleImage
 		{76FD32F3-0653-44C5-BA12-E19E34E00AB8}.SingleImage|x86.ActiveCfg = SingleImage
 		{76FD32F3-0653-44C5-BA12-E19E34E00AB8}.SingleImage|x86.Build.0 = SingleImage
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|Any CPU.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|Any CPU.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|ARM.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|ARM.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|Mixed Platforms.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|x64.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|x64.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|x86.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.CD_ROM|x86.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|ARM.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|x64.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Debug|x86.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|Any CPU.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|ARM.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|ARM.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|x64.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|x64.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|x86.ActiveCfg = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.DVD-5|x86.Build.0 = Debug|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|ARM.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|ARM.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|x64.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|x64.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.Release|x86.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|Any CPU.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|Any CPU.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|ARM.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|ARM.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|Mixed Platforms.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|x64.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|x64.Build.0 = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|x86.ActiveCfg = Release|Any CPU
+		{0BA56256-CB30-4DEB-A442-6ACBB7F6B2B3}.SingleImage|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

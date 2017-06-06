@@ -145,10 +145,10 @@ copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(Conf
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>echo copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
+      <Command>echo copy /y $(TargetDir)*.* $(SolutionDir)Binaries\x86\
 echo copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 echo copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
-copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
+copy /y $(TargetDir)*.* $(SolutionDir)Binaries\x86\
 copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
 </Command>

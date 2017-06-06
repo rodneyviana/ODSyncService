@@ -15,15 +15,19 @@ namespace TestConsole
         static ServiceHost host = null;
         static void Main(string[] args)
         {
+            Console.WriteLine("Press 'q' to end or any key to reapeat");
+            do
+            {
+                OdSyncStatusWS os = new OdSyncStatusWS();
 
-            OdSyncStatusWS os = new OdSyncStatusWS();
 
-            
-             var statuses = os.GetStatus();
-            Console.WriteLine("======================================================");
-            Console.WriteLine();
-             foreach(var status in statuses)
-                Console.WriteLine("{2} - Status = {0} Path = {1}", status.StatusString, status.LocalPath, status.ServiceType);
+                var statuses = os.GetStatus();
+                Console.WriteLine("======================================================");
+                Console.WriteLine();
+                
+                    foreach (var status in statuses)
+                        Console.WriteLine("{2} - Status = {0} Path = {1}", status.StatusString, status.LocalPath, status.ServiceType);
+            } while (Console.ReadKey().KeyChar != 'q');
 
             try
             {
