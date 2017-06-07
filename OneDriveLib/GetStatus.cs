@@ -18,6 +18,12 @@ namespace OneDriveLib
             get; set;
         }
 
+        [Parameter(Position = 1)]
+        public string ByPath
+        {
+            get; set;
+        }
+
         static string dllPath = null;
         static string originalPath = null;
 
@@ -67,6 +73,14 @@ namespace OneDriveLib
 
             OdSyncStatusWS os = new OdSyncStatusWS();
             List<StatusDetail> statuses = new List<StatusDetail>();
+
+            // Just Get the Path
+            if(!String.IsNullOrEmpty(ByPath))
+            {
+                WriteObject(os.GetStatus(ByPath).ToString());
+                return;
+                
+            }
             var statusCol = os.GetStatus();
             foreach(var status in statusCol)
             {

@@ -136,6 +136,28 @@ namespace Native
 
     [ComVisible(false)]
     [ComImport]
+    [Guid("8BA85C75-763B-4103-94EB-9470F12FE0F7")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IIconGrooveError : IShellIconOverlayIdentifier
+    { }
+
+    [ComVisible(false)]
+    [ComImport]
+    [Guid("CD55129A-B1A1-438E-A425-CEBC7DC684EE")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IIconGrooveSync : IShellIconOverlayIdentifier
+    { }
+
+    [ComVisible(false)]
+    [ComImport]
+    [Guid("E768CD3B-BDDC-436D-9C13-E1B39CA257B1")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IIconGrooveUpToDate : IShellIconOverlayIdentifier
+    { }
+
+
+    [ComVisible(false)]
+    [ComImport]
     [Guid("0C6C4200-C589-11D0-999A-00C04FD655E1")]
     public class ShellIconOverlayIdentifier
     {

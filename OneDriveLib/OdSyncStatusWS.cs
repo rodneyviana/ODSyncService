@@ -8,6 +8,7 @@ using System.Security.Principal;
 using System.ServiceModel;
 using System.Text;
 using Native;
+using System.DirectoryServices.AccountManagement;
 //using FileSyncLibrary;
 
 namespace OdSyncService
@@ -51,6 +52,12 @@ namespace OdSyncService
                 return ServiceStatus.SharedSync;
             if (Native.API.IsTrue<IIconSync>(Path))
                 return ServiceStatus.Syncing;
+            if (Native.API.IsTrue<IIconGrooveUpToDate>(Path))
+                return ServiceStatus.UpToDate;
+            if (Native.API.IsTrue<IIconGrooveSync>(Path))
+                return ServiceStatus.Syncing;
+            if (Native.API.IsTrue<IIconGrooveError>(Path))
+                return ServiceStatus.Error;
 
             return ServiceStatus.NotInstalled;
         }
@@ -125,7 +132,7 @@ namespace OdSyncService
                 {
                     if (key.SubKeyCount == 0)
                     {
-                        yield return new StatusDetail() { Status = ServiceStatus.NotInstalled };
+                        yield return new StatusDetail() { Status = ServiceStatus.NotInstalled, ServiceType="OneDrive" };
                     }
                     foreach (var subkey in key.GetSubKeyNames())
                     {
@@ -172,12 +179,75 @@ namespace OdSyncService
 
 
         }
+
+        public IEnumerable<StatusDetail> GetStatusInternalGroove()
+        {
+            //const string hklm = "HKEY_LOCAL_MACHINE";
+            const string subkeyString = @"Software\Microsoft\Office"; // SkyDrive\UserSyncRoots\";
+
+            using (var key = Registry.CurrentUser.OpenSubKey(subkeyString))
+            {
+                if (key == null)
+                {
+                    yield return new StatusDetail() { Status = ServiceStatus.NotInstalled, ServiceType="Groove" };
+                }
+                else
+                {
+                    if (key.SubKeyCount == 0)
+                    {
+                        yield return new StatusDetail() { Status = ServiceStatus.NotInstalled };
+                    }
+                    foreach (var subkey in key.GetSubKeyNames())
+                    {
+                        using (var userKey = key.OpenSubKey(String.Format("{0}{1}", subkey, @"\Common\Internet")))
+                        {
+                            if (userKey != null && userKey.GetValue("LocalSyncClientDiskLocation") as String[] != null)
+                            {
+                                string[] folders = userKey.GetValue("LocalSyncClientDiskLocation") as String[];
+                                foreach (var folder in folders)
+                                {
+                                    var detail = new StatusDetail();
+                                    try
+                                    {
+
+                                        detail.UserName = WindowsIdentity.GetCurrent().Name;
+                                        detail.UserSID = UserPrincipal.Current.Sid.ToString();
+
+
+                                        string[] parts = subkey.Split('!');
+
+                                        detail.ServiceType = String.Format("Groove{0}", parts[parts.Length - 1]);
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        detail.UserName = String.Format("{0}: {1}", ex.GetType().ToString(),
+                                            ex.Message);
+                                    }
+                                    detail.LocalPath = folder;
+                                    detail.StatusString = GetStatus(detail.LocalPath).ToString();
+                                    yield return detail;
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+
+        }
         public StatusDetailCollection GetStatus()
         {
             StatusDetailCollection statuses = new StatusDetailCollection();
 
             foreach (var status in GetStatusInternal())
-                statuses.Add(status);
+                if(status.Status != ServiceStatus.NotInstalled)
+                    statuses.Add(status);
+            foreach (var status in GetStatusInternalGroove())
+                if (status.Status != ServiceStatus.NotInstalled)
+                    statuses.Add(status);
             return statuses;
         }
 

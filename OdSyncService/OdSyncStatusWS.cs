@@ -51,6 +51,13 @@ namespace OdSyncService
                 return ServiceStatus.SharedSync;
             if (Native.API.IsTrue<IIconSync>(Path))
                 return ServiceStatus.Syncing;
+            if (Native.API.IsTrue<IIconGrooveUpToDate>(Path))
+                return ServiceStatus.UpToDate;
+            if (Native.API.IsTrue<IIconGrooveSync>(Path))
+                return ServiceStatus.Syncing;
+            if (Native.API.IsTrue<IIconGrooveError>(Path))
+                return ServiceStatus.Error;
+
 
             return ServiceStatus.NotInstalled;
         }
