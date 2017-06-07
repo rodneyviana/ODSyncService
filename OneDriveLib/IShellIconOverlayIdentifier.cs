@@ -18,6 +18,12 @@ namespace Native
             [In, MarshalAs(UnmanagedType.LPWStr)] string GuidString,
             [In,MarshalAs(UnmanagedType.LPWStr)] string Path);
 
+        [DllImport("ODNative.dll", EntryPoint = "?GetShellInterfaceFromGuid@@YAJPAHPA_W1@Z", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint GetShellInterfaceFromGuid32(
+            [Out, MarshalAs(UnmanagedType.Bool)] out bool IsTrue,
+            [In, MarshalAs(UnmanagedType.LPWStr)] string GuidString,
+            [In, MarshalAs(UnmanagedType.LPWStr)] string Path);
+
         [DllImport("ole32.dll", EntryPoint = "CoCreateInstance", CallingConvention = CallingConvention.StdCall)]
         static extern uint CoCreateInstance(
             ref Guid rclsid,
@@ -33,7 +39,12 @@ namespace Native
 
             Guid CLSID = typeof(T).GUID;
             bool isTrue = false;
-            var hr = GetShellInterfaceFromGuid(out isTrue, CLSID.ToString("B"), Path+"\\");
+            uint hr = 1;
+            if(Marshal.SizeOf(IntPtr.Zero) == 8)
+                hr = GetShellInterfaceFromGuid(out isTrue, CLSID.ToString("B"), Path+"\\");
+            else
+                hr = GetShellInterfaceFromGuid32(out isTrue, CLSID.ToString("B"), Path + "\\");
+
 #if DEBUG
             Console.Write("{0}:{1}({2}) ", typeof(T).ToString(), typeof(T).GUID.ToString("B"), isTrue);
 #endif
