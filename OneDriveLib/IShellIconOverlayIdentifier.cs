@@ -38,6 +38,12 @@ namespace Native
         {
 
             Guid CLSID = typeof(T).GUID;
+#if DEBUG
+            OneDriveLib.WriteLog.WriteToFile = true;
+            OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Testing Type: {0}, Path: {1}", typeof(T).ToString(), Path));
+#endif
+            return IsCertainType(Path, CLSID);
+            /*
             bool isTrue = false;
             uint hr = 1;
             if(Marshal.SizeOf(IntPtr.Zero) == 8)
@@ -52,8 +58,31 @@ namespace Native
                 return isTrue;
             else
                 return false;
+            */
+        }
+
+        static public bool IsCertainType(string Path, Guid CLSID)
+        {
+            bool isTrue = false;
+            uint hr = 1;
+            if (Marshal.SizeOf(IntPtr.Zero) == 8)
+                hr = GetShellInterfaceFromGuid(out isTrue, CLSID.ToString("B"), Path + "\\");
+            else
+                hr = GetShellInterfaceFromGuid32(out isTrue, CLSID.ToString("B"), Path + "\\");
+
+#if DEBUG
+            OneDriveLib.WriteLog.WriteToFile = true;
+            OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Testing CLSID: {0}, Path: {1}, HR=0x{2:X}", CLSID.ToString("B"), Path, hr));
+            //Console.Write("{0}:{1}({2}) ", typeof(T).ToString(), CLSID.ToString("B"), isTrue);
+#endif
+            if (hr == 0)
+                return isTrue;
+            else
+                return false;
+
         }
     }
+
 
 
     [ComVisible(false)]

@@ -25,7 +25,7 @@ namespace OdSyncService
         UpToDate,
         Syncing,
         ReadOnly,
-        NotInstalled
+        OnDemandOrUnknown
     }
 
 
@@ -66,7 +66,7 @@ namespace OdSyncService
                 }
                 catch
                 {
-                    Status = ServiceStatus.NotInstalled;
+                    Status = ServiceStatus.OnDemandOrUnknown;
                 }
             }
         }

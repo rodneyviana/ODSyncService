@@ -59,7 +59,7 @@ namespace OdSyncService
             if (Native.API.IsTrue<IIconGrooveError>(Path))
                 return ServiceStatus.Error;
 
-            return ServiceStatus.NotInstalled;
+            return ServiceStatus.OnDemandOrUnknown;
         }
 
         /*
@@ -126,13 +126,13 @@ namespace OdSyncService
             {
                 if (key == null)
                 {
-                    yield return new StatusDetail() { Status = ServiceStatus.NotInstalled };
+                    yield return new StatusDetail() { Status = ServiceStatus.OnDemandOrUnknown };
                 }
                 else
                 {
                     if (key.SubKeyCount == 0)
                     {
-                        yield return new StatusDetail() { Status = ServiceStatus.NotInstalled, ServiceType="OneDrive" };
+                        yield return new StatusDetail() { Status = ServiceStatus.OnDemandOrUnknown, ServiceType="OneDrive" };
                     }
                     foreach (var subkey in key.GetSubKeyNames())
                     {
@@ -189,13 +189,13 @@ namespace OdSyncService
             {
                 if (key == null)
                 {
-                    yield return new StatusDetail() { Status = ServiceStatus.NotInstalled, ServiceType="Groove" };
+                    yield return new StatusDetail() { Status = ServiceStatus.OnDemandOrUnknown, ServiceType="Groove" };
                 }
                 else
                 {
                     if (key.SubKeyCount == 0)
                     {
-                        yield return new StatusDetail() { Status = ServiceStatus.NotInstalled };
+                        yield return new StatusDetail() { Status = ServiceStatus.OnDemandOrUnknown };
                     }
                     foreach (var subkey in key.GetSubKeyNames())
                     {
@@ -240,13 +240,18 @@ namespace OdSyncService
         }
         public StatusDetailCollection GetStatus()
         {
+
+            OneDriveLib.WriteLog.WriteToFile = true;
+            OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Is Interactive: {0}, Is UAC Enabled: {1}, Is Elevated: {2}", Environment.UserInteractive, OneDriveLib.UacHelper.IsUacEnabled,
+                OneDriveLib.UacHelper.IsProcessElevated));
+
             StatusDetailCollection statuses = new StatusDetailCollection();
 
             foreach (var status in GetStatusInternal())
-                if(status.Status != ServiceStatus.NotInstalled)
+                if(status.Status != ServiceStatus.OnDemandOrUnknown)
                     statuses.Add(status);
             foreach (var status in GetStatusInternalGroove())
-                if (status.Status != ServiceStatus.NotInstalled)
+                if (status.Status != ServiceStatus.OnDemandOrUnknown)
                     statuses.Add(status);
             return statuses;
         }
