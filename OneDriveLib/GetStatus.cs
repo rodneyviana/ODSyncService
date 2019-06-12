@@ -85,14 +85,7 @@ namespace OneDriveLib
 
             }
             WriteObject(statuses.ToArray());
-            // Cleanup if possible
-            try
-            {
-                File.Delete(Path.Combine(dllPath, dllName));
-            } catch
-            {
 
-            }
         }
 
         private static void CopyDLL()

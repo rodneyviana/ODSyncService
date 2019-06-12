@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 
 namespace OdSyncService
 {
@@ -28,6 +30,26 @@ namespace OdSyncService
         OnDemandOrUnknown
     }
 
+    public class PathStatus
+    {
+        internal PathStatus(string FilePath, ServiceStatus FileStatus)
+        {
+            Path = FilePath;
+            Status = FileStatus.ToString();
+        }
+
+        public string Path
+        {
+            protected set;
+            get;
+        }
+
+        public string Status
+        {
+            protected set;
+            get;
+        }
+    }
 
     [DataContract]
     public class StatusDetail
@@ -71,6 +93,32 @@ namespace OdSyncService
             }
         }
 
+        public List<PathStatus> GetUnsynchedFiles(bool StopAtFirst = true)
+        {
+            string[] files = Directory.GetFiles(LocalPath, "*.*", SearchOption.AllDirectories);
+            OdSyncStatusWS os = new OdSyncStatusWS();
+            List<PathStatus> synched = new List<PathStatus>();
+            int i = 0;
+            foreach (var file in files)
+            {
+                var status = os.GetStatus(file);
+                
+                if(status != ServiceStatus.OnDemandOrUnknown && status != ServiceStatus.UpToDate && status != ServiceStatus.SharedSync)
+                {
+                    synched.Add(new PathStatus(file, status));
+                    if(StopAtFirst)
+                    {
+                        return synched;
+                    }
+                    if (i++ == 100)
+                    {
+                        i = 0;
+                        Thread.Sleep(0); // let the cpu process other threads
+                    }
+                }
+            }
+            return synched;
+        }
     }
 
     [CollectionDataContract]
