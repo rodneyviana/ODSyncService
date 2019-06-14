@@ -17,19 +17,21 @@ __declspec(dllexport) HRESULT GetShellInterfaceFromGuid(BOOL* IsTrue , LPWSTR Gu
 	}
 	CComPtr<IShellIconOverlayIdentifier> spShellIcon;
 	CLSID CLSID_Interface;
+#pragma warning (disable: 6031)
 	CLSIDFromString(GuidString, &CLSID_Interface);
 	hr = spShellIcon.CoCreateInstance(CLSID_Interface);
 
 	*IsTrue = 0;
 	if (hr != S_OK)
 		return hr;
-
+	/*
 	int Priority = -1;
 	SHFILEINFO fi = {0};
 	::SHGetFileInfo(Path, FILE_ATTRIBUTE_DIRECTORY, &fi, sizeof(fi), SHGFI_ADDOVERLAYS | SHGFI_ICONLOCATION | SHGFI_OVERLAYINDEX | SHGFI_ICON | SHGFI_TYPENAME);
-
+	*/
 	*IsTrue = spShellIcon->IsMemberOf(Path, 0) == S_OK;
 	
+	::CoUninitialize();
 
 	return S_OK; //(HRESULT)fi.hIcon; // S_OK;
 

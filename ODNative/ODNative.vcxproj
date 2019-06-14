@@ -100,10 +100,11 @@
       <Command>echo copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 echo copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 echo copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
+echo copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\resources\ODNative32.dll
 copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
-</Command>
+copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\resources\ODNative32.dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -122,9 +123,11 @@ copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(Conf
       <Command>echo copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 echo copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 echo copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
+echo copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\Resources\ODNative.dll
 copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
+copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\Resources\ODNative.dll
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -145,13 +148,14 @@ copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(Conf
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>echo copy /y $(TargetDir)*.* $(SolutionDir)Binaries\x86\
+      <Command>echo copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 echo copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 echo copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
-copy /y $(TargetDir)*.* $(SolutionDir)Binaries\x86\
+echo copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\resources\ODNative32.dll
+copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
-</Command>
+copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\resources\ODNative32.dll</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,9 +178,11 @@ copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(Conf
       <Command>echo copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 echo copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 echo copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
+echo copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\Resources\ODNative.dll
 copy /y $(TargetDir)*.* $(SolutionDir)Binaries\
 copy /y $(TargetDir)*.* $(SolutionDir)TestConsole\bin\$(PlatformTarget)\$(ConfigurationName)\
 copy /y $(TargetDir)*.* $(SolutionDir)OdSyncService\bin\$(PlatformTarget)\$(ConfigurationName)\
+copy /y $(TargetPath) $(SolutionDir)\OneDriveLib\Resources\ODNative.dll
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
