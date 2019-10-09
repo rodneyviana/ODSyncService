@@ -1,5 +1,10 @@
 **Open PowerShell (it cannot be in elevated mode because of OneDrive design)**
 
+**Before running the first time, use this to unblock the DLL that you downloaded:**
+```
+PS C:\ODTool> Unblock-File -Path C:\ODTool\OneDriveLib.dll # change path if necessary
+```
+
 **Run this:**
 ```
 Import-Module OneDriveLib.dll
