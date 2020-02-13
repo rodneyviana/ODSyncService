@@ -55,7 +55,7 @@ Get-ODStatus
 
 Check if a particular file of folder is synchronized
 
-Get-ODStatus "$($env:OneDrive)\DalyReports\"
+Get-ODStatus -ByPath "$($env:OneDrive)\DalyReports\"
 
 Save and list the log file:
 
