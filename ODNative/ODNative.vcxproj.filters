@@ -37,6 +37,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Binaries\PowerShell\Readme.md" />
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>

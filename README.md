@@ -1,5 +1,7 @@
 **Open PowerShell (it cannot be in elevated mode because of OneDrive design)**
 
+[Download here](https://github.com/rodneyviana/ODSyncService/releases)
+
 **Before running the first time, use this to unblock the DLL that you downloaded:**
 ```
 PS C:\ODTool> Unblock-File -Path C:\ODTool\OneDriveLib.dll # change path if necessary
