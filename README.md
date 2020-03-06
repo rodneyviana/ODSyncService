@@ -44,7 +44,7 @@ Where:
     -Type <type-of-service> - Filter response by type of service (e.g. Business1 or Personal)
     -CLSID <icon-overlay-guid> - Test a different type of icon overlay (you may use this to test other services like DropBox
                                  if know their Guid)
-    -IncludeLog $true|$false - If $true will create a detailed log file on temp path (use $env:Temp in PowerPoint to find
+    -IncludeLog $true|$false - If $true will create a detailed log file on temp path (use $env:Temp in PowerShell to find
                                the temp folder). The file name starts with OneDriveLib.
 
 Examples:
