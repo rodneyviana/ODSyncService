@@ -62,60 +62,6 @@ namespace OdSyncService
             return ServiceStatus.OnDemandOrUnknown;
         }
 
-        /*
-        public IEnumerable<StatusDetail> GetStatusInternal()
-        {
-            //const string hklm = "HKEY_LOCAL_MACHINE";
-            const string subkeyString = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager\"; // SkyDrive\UserSyncRoots\";
-
-            using (var key = Registry.LocalMachine.OpenSubKey(subkeyString))
-            {
-                if (key == null)
-                {
-                    yield return new StatusDetail() { Status = ServiceStatus.NotInstalled };
-                }
-                else
-                {
-                    if (key.SubKeyCount == 0)
-                    {
-                        yield return new StatusDetail() { Status = ServiceStatus.NotInstalled };
-                    }
-                    foreach (var subkey in key.GetSubKeyNames())
-                    {
-                        using (var userKey = key.OpenSubKey(String.Format("{0}{1}", subkey, @"\UserSyncRoots")))
-                        {
-                            if (userKey != null)
-                            {
-                                foreach (var valueName in userKey.GetValueNames())
-                                {
-                                    var detail = new StatusDetail();
-                                    try
-                                    {
-                                        var id = new SecurityIdentifier(valueName);
-                                        string userName = id.Translate(typeof(NTAccount)).Value;
-                                        detail.UserName = userName;
-                                        detail.UserSID = valueName;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        detail.UserName = String.Format("{0}: {1}", ex.GetType().ToString(),
-                                            ex.Message);
-                                    }
-                                    detail.LocalPath = userKey.GetValue(valueName) as string;
-                                    detail.StatusString = GetSystemStatus(detail.LocalPath);
-                                    yield return detail;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-
-        }
-        */
-
 
         public IEnumerable<StatusDetail> GetStatusInternal()
         {
@@ -165,6 +111,7 @@ namespace OdSyncService
                                     {
                                         detail.UserName = String.Format("{0}: {1}", ex.GetType().ToString(),
                                             ex.Message);
+                                        OneDriveLib.WriteLog.WriteErrorEvent("OneDrive " + detail.UserName);
                                     }
                                     detail.LocalPath = userKey.GetValue(valueName) as string;
                                     detail.StatusString = GetStatus(detail.LocalPath).ToString();
@@ -221,8 +168,9 @@ namespace OdSyncService
                                     }
                                     catch (Exception ex)
                                     {
-                                        detail.UserName = String.Format("{0}: {1}", ex.GetType().ToString(),
+                                        detail.UserName = String.Format("Groove - {0}: {1}", ex.GetType().ToString(),
                                             ex.Message);
+                                        OneDriveLib.WriteLog.WriteErrorEvent(detail.UserName);
                                     }
                                     detail.LocalPath = folder;
                                     detail.StatusString = GetStatus(detail.LocalPath).ToString();
