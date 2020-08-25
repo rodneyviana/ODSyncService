@@ -71,7 +71,7 @@ namespace OneDriveLib
             get
             {
                 RegistryKey uacKey = Registry.LocalMachine.OpenSubKey(uacRegistryKey, false);
-                bool result = uacKey.GetValue(uacRegistryValue).Equals(1);
+                bool result = (uacKey?.GetValue(uacRegistryValue) ?? 1).Equals(1);
                 return result;
             }
         }
