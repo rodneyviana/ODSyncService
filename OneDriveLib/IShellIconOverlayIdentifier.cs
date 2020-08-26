@@ -38,10 +38,11 @@ namespace Native
         {
 
             Guid CLSID = typeof(T).GUID;
-#if DEBUG
+
+            var isType = IsCertainType(Path, CLSID);
             OneDriveLib.WriteLog.WriteToFile = true;
-            OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Testing Type: {0}, Path: {1}", typeof(T).ToString(), Path));
-#endif
+            OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Testing Type: {0} [{1}], Path: {2}: {3}", typeof(T).ToString(), CLSID, Path, isType));
+
             return IsCertainType(Path, CLSID);
             /*
             bool isTrue = false;
