@@ -14,7 +14,7 @@ namespace OdSyncService
     public interface IOdSyncStatusWS
     {
         [OperationContract]
-        StatusDetailCollection GetStatus();
+        StatusDetailCollection GetStatus(bool currentUserOnly = false);
 
     }
 

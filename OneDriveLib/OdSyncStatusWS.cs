@@ -117,7 +117,7 @@ namespace OdSyncService
         */
 
 
-        public IEnumerable<StatusDetail> GetStatusInternal()
+        private IEnumerable<StatusDetail> GetStatusInternal(bool currentUserOnly)
         {
             //const string hklm = "HKEY_LOCAL_MACHINE";
             const string subkeyString = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager\"; // SkyDrive\UserSyncRoots\";
@@ -134,9 +134,17 @@ namespace OdSyncService
                     {
                         yield return new StatusDetail() { Status = ServiceStatus.OnDemandOrUnknown, ServiceType="OneDrive" };
                     }
-                    foreach (var subkey in key.GetSubKeyNames())
+
+                    IEnumerable<string> subKeys = key.GetSubKeyNames();
+                    if (currentUserOnly)
                     {
-                        using (var userKey = key.OpenSubKey(String.Format("{0}{1}", subkey, @"\UserSyncRoots")))
+                        var currentUser = WindowsIdentity.GetCurrent().User?.Value ?? string.Empty;
+                        subKeys = subKeys.Where(s => s.Contains(currentUser));
+                    }
+
+                    foreach (var subKey in subKeys)
+                    {
+                        using (var userKey = key.OpenSubKey(String.Format("{0}{1}", subKey, @"\UserSyncRoots")))
                         {
                             if (userKey != null)
                             {
@@ -238,16 +246,15 @@ namespace OdSyncService
 
 
         }
-        public StatusDetailCollection GetStatus()
+        public StatusDetailCollection GetStatus(bool currentUserOnly = false)
         {
-
             OneDriveLib.WriteLog.WriteToFile = true;
             OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Is Interactive: {0}, Is UAC Enabled: {1}, Is Elevated: {2}", Environment.UserInteractive, OneDriveLib.UacHelper.IsUacEnabled,
                 OneDriveLib.UacHelper.IsProcessElevated));
 
             StatusDetailCollection statuses = new StatusDetailCollection();
 
-            foreach (var status in GetStatusInternal())
+            foreach (var status in GetStatusInternal(currentUserOnly))
                 if(status.Status != ServiceStatus.OnDemandOrUnknown)
                     statuses.Add(status);
             foreach (var status in GetStatusInternalGroove())

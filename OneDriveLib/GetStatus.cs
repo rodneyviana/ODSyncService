@@ -36,6 +36,12 @@ namespace OneDriveLib
             get; set;
         }
 
+        [Parameter(Position = 4, HelpMessage = "To test the status for the current user only")]
+        public SwitchParameter CurrentUserOnly
+        {
+            get; set;
+        }
+
         private const string dllName = "ODNative.dll";
         static string dllPath = null;
         static string originalPath = null;
@@ -70,7 +76,7 @@ namespace OneDriveLib
                 return;
                 
             }
-            var statusCol = os.GetStatus();
+            var statusCol = os.GetStatus(CurrentUserOnly);
             foreach(var status in statusCol)
             {
                 if (String.IsNullOrEmpty(Type) || status.ServiceType.ToLower().Contains(Type.ToLower().Replace("*", "")))
