@@ -60,8 +60,8 @@ int wmain(int argc, wchar_t* argv[])
 
 	if (s_isClear)
 	{
-		Log(format(L"Deleting auto launch key. Use 'ODOnDemand.exe -lauch' to restart monitoring", myApp.c_str()));
-		wprintf(L"Deleting auto launch key. Use 'ODOnDemand.exe -lauch' to restart monitoring\n", myApp.c_str());
+		Log(format(L"Deleting auto launch key. Use 'ODOnDemand.exe -onLaunch' to restart monitoring", myApp.c_str()));
+		wprintf(L"Deleting auto launch key. Use 'ODOnDemand.exe -onLaunch' to restart monitoring\n", myApp.c_str());
 		hr = DeleteDebugKey(L"OneDrive.exe");
 		if (hr == ERROR_ACCESS_DENIED)
 		{

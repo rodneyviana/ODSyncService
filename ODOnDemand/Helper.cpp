@@ -3,6 +3,7 @@
 #include <fstream>
 #include <locale>
 #include <codecvt>
+#include <wil/resource.h>
 
 wstring s_appPool;
 wstring cmdLine;
@@ -547,15 +548,17 @@ ULONG CreateLocalProcess()
 
 	BOOL procStarted = CreateProcess(NULL, &cmdLine.front(), NULL, NULL, FALSE,
 		CREATE_SUSPENDED | DEBUG_ONLY_THIS_PROCESS, NULL, NULL, &si, &pi);
+	wil::unique_handle procHandle(pi.hProcess);
+	wil::unique_handle threadHandle(pi.hThread);
 	if (!procStarted)
 	{
 		retValue = ::GetLastError();
 		Log(format(L"Could launch guest process. Error: %x\n", retValue), L"Launch", sev::Error);
-		goto CleanUpProcess;
+		return retValue;
 	}
 
 	isDebugModeError = DebugActiveProcessStop(pi.dwProcessId);
-	rc = ResumeThread(pi.hThread);
+	rc = ResumeThread(threadHandle.get());
 	if (rc < 1)
 	{
 		retValue = GetLastError();
@@ -568,18 +571,15 @@ ULONG CreateLocalProcess()
 				cmdLine.c_str(), retValue), L"Launch", sev::Error);
 		}
 	}
-	WaitForSingleObject(pi.hProcess, INFINITE);
+	WaitForSingleObject(procHandle.get(), INFINITE);
 
 	// Get the exit code.
 	exitCode = 0;
-	result = GetExitCodeProcess(pi.hProcess, &exitCode);
+	result = GetExitCodeProcess(procHandle.get(), &exitCode);
 	if (result)
 		retValue = exitCode;
-
-CleanUpProcess:
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
 	return retValue;
+
 }
 
 ULONG CreateDebuggingProcess()
@@ -592,35 +592,35 @@ ULONG CreateDebuggingProcess()
 	DWORD retValue = 0;
 	BOOL procStarted = CreateProcess(NULL, &cmdLine.front(), NULL, NULL, FALSE,
 		CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+	wil::unique_handle procHandle(pi.hProcess);
+	wil::unique_handle threadHandle(pi.hThread);
 	DWORD rc = 0;
 	if (!procStarted)
 	{
 		retValue = ::GetLastError();
 		Log(format(L"Could launch guest process. Error: %x\n", retValue), L"Launch", sev::Error);
-		goto CleanUpProcess;
+		return retValue;
 	}
 
 	AttachTo(pi.dwProcessId);
-	rc = ResumeThread(pi.hThread);
+	rc = ResumeThread(threadHandle.get());
 	if (rc < 1)
 	{
 		retValue = GetLastError();
 		Log(format(L"Error: Could not resume the created process (%s)\nError: %d",
 			cmdLine.c_str(), retValue), L"Launch", sev::Error);
-		if (!TerminateProcess(pi.hProcess, 1))
+		if (!TerminateProcess(procHandle.get(), 1))
 		{
 			retValue = GetLastError();
 			Log(format(L"Error: Could not terminate the created process:%s\n\tError: %d",
 				cmdLine.c_str(), retValue), L"Launch", sev::Error);
 		}
-		goto CleanUpProcess;
+		return retValue;
 	}
 
 	s_AttachId = pi.dwProcessId;
 	Log(format(L"Successfully started process (id=%d, cmdLine='%s')", s_AttachId, cmdLine.c_str()));
-CleanUpProcess:
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
+
 	return retValue;
 }
 
