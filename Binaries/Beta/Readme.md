@@ -5,6 +5,7 @@ Be aware that this software is provided "AS IS". This is a beta and may never se
 
 ## Getting things ready
 
+- You may need to install C++ Runtime before running the application if you have a previous version
 - The BETA version is not digitally signed. Check the hash at the bottom (Get-FileHash)
 - Download OnOnDemand.exe from this Beta folder. Unblock the file ODOnDemand.exe (beta is not signed). Unblock the file as it was downloaded from the Internet it will most likely be marked as blocked.
 - Make sure the application is located on a folder that all users of the machine have access.
