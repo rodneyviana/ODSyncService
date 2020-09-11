@@ -7,7 +7,7 @@ Be aware that this software is provided "AS IS". This is a beta and may never se
 
 - You may need to install C++ Runtime before running the application if you have a previous version
 - The BETA version is not digitally signed. Check the hash at the bottom (Get-FileHash)
-- Download OnOnDemand.exe from this Beta folder. Unblock the file ODOnDemand.exe (beta is not signed). Unblock the file as it was downloaded from the Internet it will most likely be marked as blocked.
+- Download ODOnDemand.exe from this Beta folder. Unblock the file ODOnDemand.exe (beta is not signed). Unblock the file as it was downloaded from the Internet it will most likely be marked as blocked.
 - Make sure the application is located on a folder that all users of the machine have access.
 - In order to monitor OneDrive NEEDS to be on the notification area of the taskbar
 - If auto monitoring is not enabled the log will onlys starts after the first change in status
@@ -38,7 +38,25 @@ Be aware that this software is provided "AS IS". This is a beta and may never se
 - There may be more than one instance of OneDrive (personal and business) and you need to attach to both
 - This command will attach to the process: *ODOnDemand.exe -attach PID* where PID is the process id.
 
+## Example of PowerShell script to capture the latest status
 
+```
+
+$content = Get-Content -Path "$($env:LOCALAPPDATA)\OneDriveMonitor\Logs\OneDriveMonitor_$((Get-Date).ToString('yyyy-MM-dd')).log";
+$lastStatus = '';
+for($count=$content.Count-1;$count -gt 0; $count--)
+{
+    if($content[$count].Contains('IconChange'))
+    {
+        $lastStatus = $content[$count].Split("`t")[3];
+        $lastStatus = $lastStatus.Split("'")[1];
+        break;
+    }
+    
+}
+
+Write-Host $lastStatus
+```
 
 ## Latest version Hash (SHA256)
 B155355587DE8BCAEFBBC18D2D05F288B30E34C0AEDE078CEBB52B9289FE977B
