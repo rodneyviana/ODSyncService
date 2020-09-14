@@ -138,8 +138,12 @@ EventCallBacks::GetInterestMask(
 	_Out_ PULONG Mask
 )
 {
+#if _DEBUG
 	*Mask =
 		DEBUG_EVENT_BREAKPOINT | DEBUG_EVENT_LOAD_MODULE | DEBUG_EVENT_SESSION_STATUS | DEBUG_EVENT_EXCEPTION | DEBUG_EVENT_CHANGE_DEBUGGEE_STATE;
+#else
+	* Mask = DEBUG_EVENT_BREAKPOINT | DEBUG_EVENT_LOAD_MODULE | DEBUG_EVENT_SESSION_STATUS;
+#endif
 	/*|
 	DEBUG_EVENT_EXCEPTION |
 	DEBUG_EVENT_CREATE_PROCESS |
@@ -195,7 +199,7 @@ EventCallBacks::Exception(
 	{
 		return DEBUG_STATUS_BREAK;
 	}
-	return DEBUG_STATUS_GO_HANDLED;
+	return DEBUG_STATUS_GO;
 
 }
 
@@ -281,7 +285,9 @@ EventCallBacks::SessionStatus(
 
 	if (SessionStatus == DEBUG_SESSION_END)
 	{
+#if _DEBUG
 		printf("Application ended\n");
+#endif
 		Log(L"Application Ended");
 		exit(0);
 

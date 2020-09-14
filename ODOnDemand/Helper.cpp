@@ -284,8 +284,17 @@ void CreateInterfaces()
 
 void PrintUsage()
 {
+	printf("OneDrive OnDemand monitoring tool 1.0");
 	printf("\n");
 	printf("Syntax:                                          \n");
+	printf("ODOnDemand.exe [-help] [-clear] [-onLaunch] [-stop] [-launch <cmd-line> | -attach <PID>]\n");
+	printf("Where:\n");
+	printf("\t-help              - show this help\n");
+	printf("\t-attach <PID>      - attach OneDrive instance to PID (e.g. -attach 19024(\n");
+	printf("\t-onLaunch          - register as debugger and monitor every new launch nut not any current\n");
+	printf("\t-clear             - unregister as debugger nut will not detach current monitoring\n");
+	printf("\t-launch <cmd-line> - launch OnedDrive with cmd-line (used only internally)\n");
+	printf("\t-stop              - stop any current monitoring [NOT IMPLEMENTED!!!]\n");
 
 }
 
@@ -327,16 +336,11 @@ void PrintErrorAndExit(HRESULT Error, wstring Message)
 	}
 	str.append(L"\n");
 	
-	if (!IsInteractive())
+	if (IsInteractive())
 	{
 		wprintf(str.c_str());
 	}
-	else
-	{
-		// TO DO
-		// Do some event log as it cannot print the error
-		OutputDebugString(str.c_str());
-	}
+	Log(str.c_str(), L"General", sev::Error);
 	exit(Error);
 }
 
@@ -394,6 +398,8 @@ LONG DeleteDebugKey(const wstring& ApplicationName)
 	return status;
 }
 
+static wstring lastStatus;
+
 HRESULT ODEventCallBack(IDebugBreakpoint* BP)
 {
 	HRESULT hr = S_OK;
@@ -406,16 +412,15 @@ HRESULT ODEventCallBack(IDebugBreakpoint* BP)
 ;
 		ULONG bytes = 0;
 		DEBUG_VALUE vl = { 0 };
-		printf("Offset = %x\n", offsetof(NOTIFYICONDATA, uID));
-		wstring evaluation = format(L"poi(0x%p) & 0xffff", frame.Params[1]+offsetof(NOTIFYICONDATA, uID));
-		
-		wprintf(L"Evaluation = %s\n", evaluation.c_str());
+		wstring evaluation = format(L"poi(0x%p) & 0xffff", frame.Params[1] + offsetof(NOTIFYICONDATA, uID));
 		hr = g_Control->EvaluateWide(evaluation.c_str(), DEBUG_VALUE_INT64, &vl, NULL);
 
-		//hr = ReadTargetMemory(frame.Params[1]+offsetof(NOTIFYICONDATA, uID), &uID);
 		if (hr != S_OK)
 		{
-			printf("error: %x", hr);
+#if _DEBUG
+			printf("error: %x\n", hr);
+#endif
+			Log(format(L"Notify Icon error 0x%x", hr), L"Breakpoint", sev::Error);
 			return DEBUG_STATUS_GO_HANDLED;
 		}
 		wstring tipStr(128, '\0');
@@ -423,7 +428,10 @@ HRESULT ODEventCallBack(IDebugBreakpoint* BP)
 		hr = g_Data->ReadVirtual(frame.Params[1] + offsetof(NOTIFYICONDATA, szTip), const_cast<wchar_t*>(tipStr.c_str()), bytes, &bytes);
 		if (hr != S_OK)
 		{
-			printf("error: %x", hr);
+#if _DEBUG
+			printf("error: %x\n", hr);
+#endif
+			Log(format(L"Notify Icon message error 0x%x", hr), L"Breakpoint", sev::Error);
 			return DEBUG_STATUS_GO_HANDLED;
 		}
 
@@ -440,9 +448,20 @@ HRESULT ODEventCallBack(IDebugBreakpoint* BP)
 		}
 		tipStr = L",tootip='" + tipStr + L"'";
 		UINT uID = vl.I32;
-		printf("Event: %i\n", uID);
 
-		Log(format(L"uID=%d,Action=%d", uID, frame.Params[0]) + tipStr, L"IconChange");
+		if (lastStatus != tipStr)
+		{
+#if _DEBUG
+			wprintf(L"Status changed: %s\n", tipStr.c_str());
+#endif
+			Log(format(L"uID=%d,Action=%d", uID, frame.Params[0]) + tipStr, L"IconChange");
+			lastStatus = tipStr;
+		}
+#if _DEBUG
+		else
+			wprintf(L"No logging because status is the same");
+#endif
+
 	}
 
 	return DEBUG_STATUS_GO_HANDLED;

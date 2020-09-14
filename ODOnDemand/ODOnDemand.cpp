@@ -34,14 +34,16 @@ int wmain(int argc, wchar_t* argv[])
 	myApp.append(L"\" -launch ");
 	HRESULT hr{ 0 };
 	hr = ::CoInitialize(NULL);
+#if _DEBUG
 	wprintf(L"log: %s\n", GetFileName().c_str());
 	wprintf(L"Ansi Time: %s\n", GetTimeAnsi().c_str());
+#endif
 	Log(L"Initiating App");
     ParseCommand(argc, argv);
 	if (s_isLaunchMode)
 	{
-		Log(format(L"Setting auto launch key. Use 'ODOnDemand.exe -clear' to remove the monitoring", myApp.c_str()));
-		wprintf(L"Setting auto launch key. Use 'ODOnDemand.exe -clear' to remove the monitoring\n", myApp.c_str());
+		Log(L"Setting auto launch key. Use 'ODOnDemand.exe -clear' to remove the monitoring");
+		wprintf(L"Setting auto launch key. Use 'ODOnDemand.exe -clear' to remove the monitoring\n");
 		hr = SetDebugKey(L"OneDrive.exe");
 		if (hr == ERROR_ACCESS_DENIED)
 		{
@@ -60,8 +62,8 @@ int wmain(int argc, wchar_t* argv[])
 
 	if (s_isClear)
 	{
-		Log(format(L"Deleting auto launch key. Use 'ODOnDemand.exe -onLaunch' to restart monitoring", myApp.c_str()));
-		wprintf(L"Deleting auto launch key. Use 'ODOnDemand.exe -onLaunch' to restart monitoring\n", myApp.c_str());
+		Log(L"Deleting auto launch key. Use 'ODOnDemand.exe -onLaunch' to restart monitoring");
+		wprintf(L"Deleting auto launch key. Use 'ODOnDemand.exe -onLaunch' to restart monitoring\n");
 		hr = DeleteDebugKey(L"OneDrive.exe");
 		if (hr == ERROR_ACCESS_DENIED)
 		{
@@ -86,11 +88,28 @@ int wmain(int argc, wchar_t* argv[])
 		AttachTo(s_AttachId);
 	else
 	{
-		if (cmdLine.find(L"/") == wstring::npos)
+		auto hWnd = ::GetConsoleWindow();
+		if (NULL != hWnd)
+		{
+			::ShowWindow(hWnd, SW_HIDE);
+			if (FALSE != ::IsWindowVisible(hWnd))
+			{
+				Log(L"Unable to hide console Window", L"General", sev::Error);
+			}
+			
+		}
+		else
+		{
+			Log(L"Unable to hide console Window", L"General", sev::Error);
+		}
+		if (false && cmdLine.find(L"/") == wstring::npos)
 		{
 			hr = CreateLocalProcess();
 			Log(format(L"Created standalone process not monitored. HR=%d", hr));
+#if _DEBUG
 			wprintf(L"Created standalone process not monitored. HR=%d\n", hr);
+#endif
+			FreeConsole();
 			exit(hr);
 		}
 		string cmdLineS = ws2s(cmdLine);
@@ -117,41 +136,35 @@ int wmain(int argc, wchar_t* argv[])
 		
 		if (hr != 0)
 			continue;
+#if _DEBUG
 		printHR("WaitForEvent", hr);
+#endif
 		hr = g_Control->GetExecutionStatus(&status);
+#if _DEBUG
 		printHR("GetStatus", hr);
 		printf("%s\n", statusStr[status].c_str());
-
+#endif
+		int bpId = -1;
 		switch (status)
 		{
 
 		case DEBUG_STATUS_BREAK:
-			if (!once)
+			bpId = callbacks->AddBreakPoint("SHELL32!Shell_NotifyIconW", "", ODEventCallBack);
+			if (bpId < 0)
 			{
-				int i = callbacks->AddBreakPoint("SHELL32!Shell_NotifyIconW", "", ODEventCallBack);
-				printf("BP %i\n", i);
-
-				hr = g_Control->SetExecutionStatus(DEBUG_STATUS_GO);
-				printHR("SetExecutionStatus to GO", hr);
-
-				auto hr = g_System->GetCurrentProcessSystemId(&s_AttachId);
-				wprintf(L"PID=%d,hr=%d\n", s_AttachId, hr);
-				//hr = g_Control->WaitForEvent(DEBUG_WAIT_DEFAULT, 10000);
-				//printHR("WaitForEvent", hr);
-
-				once = i >= 0;
+				Log(L"Unable to add breakpoint", L"General", sev::Error);
+#if _DEBUG
+				printf("BP %i\n", bpId);
+#endif
 			}
-			else
-			{
-				//hr = g_Control->SetExecutionStatus(DEBUG_STATUS_GO_NOT_HANDLED);
-				//printHR("SetExecutionStatus to GO", hr);
-				hr = g_Control->SetExecutionStatus(DEBUG_STATUS_GO);
-				printHR("SetExecutionStatus to GO", hr);
-				once = true;
-
-
-			}
-			
+			hr = g_Control->SetExecutionStatus(DEBUG_STATUS_GO);
+#if _DEBUG
+			printHR("SetExecutionStatus to GO", hr);
+#endif
+			hr = g_System->GetCurrentProcessSystemId(&s_AttachId);
+#if _DEBUG
+			wprintf(L"PID=%d,hr=%d\n", s_AttachId, hr);
+#endif
 			break;
 
 		case DEBUG_STATUS_NO_DEBUGGEE:

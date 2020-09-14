@@ -93,7 +93,7 @@ public:
 #if _DEBUG
 				UINT64 IP = 0;
 				i->second.breakPoint->GetOffset(&IP);
-				printf("Deleting BP: %p IsValid: %s\n", IP, i->second.IsValid() ? "true" : "false");
+				printf("Deleting BP: %I64x IsValid: %s\n", IP, i->second.IsValid() ? "true" : "false");
 #endif
 
 				i->second.RemoveBreakPoint();
@@ -121,18 +121,19 @@ public:
 		printf("[%s]\n", BPExpr.c_str());
 #endif
 		//std::string BPStr = formathex(BPExpr);
-		if (bps.find(BPExpr) == bps.end())
+		const auto bp = bps.find(BPExpr);
+		if (bp != bps.end())
 		{
-			bps.emplace(BPExpr, BreakpointClass(BPExpr, Tag, Method));
-			if (bps.find(BPExpr)->second.IsValid())
-				return static_cast<int>(bps.size());
-			bps.erase(BPExpr);
+			bp->second.RemoveBreakPoint();
 		}
+		bps.emplace(BPExpr, BreakpointClass(BPExpr, Tag, Method));
+		if (bps.find(BPExpr)->second.IsValid())
+				return static_cast<int>(bps.size());
+		bps.erase(BPExpr);
+
 #if _DEBUG
 		printf("*** Adding BP %s failed\n", BPExpr.c_str());
 #endif
-
-
 		return -1;
 	}
 
