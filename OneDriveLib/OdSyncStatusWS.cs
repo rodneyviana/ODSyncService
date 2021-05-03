@@ -16,25 +16,20 @@ namespace OdSyncService
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "OdSyncStatusWS" in both code and config file together.
     public class OdSyncStatusWS : IOdSyncStatusWS
     {
-        /*
-        public string GetSystemStatus(string Path)
+        private static string userSID = null;
+
+        private static string UserSID
         {
-            try
+            get
             {
-                ItemStatus status;
-
-                FileSyncClientClass fs = new FileSyncClientClass();
-
-                fs.GetItemStatus(Path, out status);
-                return status.ToString();
+                if (userSID == null)
+                {
+                    var userIdentity = WindowsIdentity.GetCurrent();
+                    userSID = userIdentity.User.ToString();
+                }
+                return userSID;
             }
-            catch (Exception ex)
-            {
-                return String.Format("Error: {0}: {1}", ex.GetType().ToString(), ex.Message);
-            }
-
         }
-        */
 
         public ServiceStatus GetStatus(string Path)
         {
@@ -82,10 +77,14 @@ namespace OdSyncService
                     }
                     foreach (var subkey in key.GetSubKeyNames())
                     {
+                        var displayKey = key.OpenSubKey(subkey);
+                        var displayName = displayKey?.GetValue("DisplayNameResource") as string;
                         using (var userKey = key.OpenSubKey(String.Format("{0}{1}", subkey, @"\UserSyncRoots")))
                         {
-                            if (userKey != null)
+                            if (userKey != null && userKey.Name.Contains(UserSID))
                             {
+                                
+                                
                                 foreach (var valueName in userKey.GetValueNames())
                                 {
                                     var detail = new StatusDetail();
@@ -95,6 +94,7 @@ namespace OdSyncService
                                         string userName = id.Translate(typeof(NTAccount)).Value;
                                         detail.UserName = userName;
                                         detail.UserSID = valueName;
+                                        detail.DisplayName = displayName;
 
                                         
                                         string[] parts = userKey.Name.Split('!');
@@ -196,11 +196,27 @@ namespace OdSyncService
             StatusDetailCollection statuses = new StatusDetailCollection();
 
             foreach (var status in GetStatusInternal())
-                if(status.Status != ServiceStatus.OnDemandOrUnknown)
-                    statuses.Add(status);
-            foreach (var status in GetStatusInternalGroove())
+            {
                 if (status.Status != ServiceStatus.OnDemandOrUnknown)
+                {
+                    if (status.Status == ServiceStatus.Error)
+                    {
+                        status.StatusString = API.GetStatusByDisplayName(status.DisplayName);
+                    }
                     statuses.Add(status);
+                }
+            }
+            foreach (var status in GetStatusInternalGroove())
+            {
+                if (status.Status != ServiceStatus.OnDemandOrUnknown)
+                {
+                    if (status.Status == ServiceStatus.Error)
+                    {
+                        status.StatusString = API.GetStatusByDisplayName(status.DisplayName);
+                    }
+                    statuses.Add(status);
+                }
+            }
             return statuses;
         }
 

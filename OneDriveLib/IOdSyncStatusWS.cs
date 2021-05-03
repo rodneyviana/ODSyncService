@@ -66,33 +66,14 @@ namespace OdSyncService
 
         internal ServiceStatus Status;
 
-        internal string statusString;
+        [DataMember]
+        public string DisplayName;
 
         [DataMember]
         public string ServiceType;
 
         [DataMember]
-        public string StatusString
-        {
-            get
-            {
-                return statusString;
-                //return Status.ToString();
-            }
-            set
-            {
-                try
-                {
-                    statusString = value;
-                    //Status = (ServiceStatus)Enum.Parse(typeof(ServiceStatus), value, false);
-                }
-                catch
-                {
-                    Status = ServiceStatus.OnDemandOrUnknown;
-                }
-            }
-        }
-
+        public string StatusString;
         public List<PathStatus> GetUnsynchedFiles(bool StopAtFirst = true)
         {
             string[] files = Directory.GetFiles(LocalPath, "*.*", SearchOption.AllDirectories);
