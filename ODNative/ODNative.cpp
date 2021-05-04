@@ -6,6 +6,7 @@
 #include <Shlobj.h>
 #include <shellapi.h>
 #include <string>
+#include "psapi.h"
 
 
 #pragma region TrayArea
@@ -77,6 +78,12 @@ wstring GetButtonText(HWND Toolbar, int Order)
 
 }
 
+/// <summary>
+/// Get Status by Name of All Buttons in Toolbar area
+/// </summary>
+/// <param name="Handle">Handle of window</param>
+/// <param name="OneDriveType">Display Name of OneDrive instance</param>
+/// <returns></returns>
 wstring GetStatusByName(HWND Handle, wstring OneDriveType)
 {
 	if (!Handle)
@@ -96,7 +103,66 @@ wstring GetStatusByName(HWND Handle, wstring OneDriveType)
 
 }
 
-HWND GetHandle(wstring OneDriveType)
+wstring nameToCompare;
+wstring currentStatus;
+
+BOOL CALLBACK enumWindowCallback(HWND hWnd, LPARAM lparam) {
+	if (currentStatus.size() > nameToCompare.size() && currentStatus.find(nameToCompare) == 0)
+		return TRUE;
+	const int maxSize = 2048;
+	wstring processPath(maxSize, L'\0');
+	wstring className(maxSize, L'\0');
+
+	DWORD processId = NULL;
+	::GetWindowThreadProcessId(hWnd, &processId);
+
+	auto procHwnd = ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processId);
+	auto length = ::GetProcessImageFileName(procHwnd, const_cast<wchar_t*>(processPath.c_str()), maxSize);
+	CloseHandle(procHwnd);
+	if (length)
+		processPath.resize(length);
+	else
+		processPath = L"<<UNKNOWN>>";
+	auto processName = processPath.substr(processPath.find_last_of(L'\\') + 1);
+	if (processName != L"explorer.exe")
+		return true;
+	length = ::GetClassName(hWnd, const_cast<wchar_t*>(className.c_str()), maxSize);
+	if (length)
+		className.resize(length);
+	else
+		className = L"<<UNKNOWN>>";
+
+	// List visible windows with a non-empty title
+	if (className == L"ToolbarWindow32") {
+		currentStatus = GetStatusByName(hWnd, nameToCompare);
+		if (currentStatus.find(L"<ERROR>") != 0)
+			return TRUE;
+	}
+	auto parent = (LPARAM)&hWnd;
+	::EnumChildWindows(hWnd, enumWindowCallback, parent);
+	return TRUE;
+}
+
+/// <summary>
+/// Get Status of OneDrive by Instance Name
+/// </summary>
+/// <param name="OneDriveType">Display Name of OneDrive instance (e.g OneDrive - Personal)</param>
+/// <returns>Status or Error string</returns>
+wstring GetStatusByName(wstring OneDriveType)
+{
+	nameToCompare = OneDriveType;
+	currentStatus = L"";
+	::EnumChildWindows(GetDesktopWindow(), enumWindowCallback, NULL);
+	return currentStatus;
+}
+
+
+
+/// <summary>
+/// Get Handle of ToolbarWindow32 (Deprecated)
+/// </summary>
+/// <returns>One Drive Window Handle in Taskbar</returns>
+HWND GetHandle()
 {
 	auto hDesktop = GetDesktopWindow();
 	auto hTray = FindWindowEx(hDesktop, 0, L"Shell_TrayWnd", NULL);
@@ -139,8 +205,7 @@ __declspec(dllexport) HRESULT GetShellInterfaceFromGuid(BOOL* IsTrue , LPWSTR Gu
 __declspec(dllexport) HRESULT GetStatusByType(LPWSTR OneDriveType, LPWSTR Status, int Size, PINT ActualSize)
 {
 	const wstring error = L"<ERROR>Buffer size is insufficient";
-	auto handle = GetHandle(OneDriveType);
-	auto result = GetStatusByName(handle, OneDriveType);
+	auto result = GetStatusByName(OneDriveType);
 	int bytesSize = static_cast<int>((result.size() + 1) * 2);
 	*ActualSize = bytesSize;
 	if (bytesSize > Size)
