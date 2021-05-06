@@ -22,34 +22,55 @@ Get-ODStatus
 PS C:\ODTool> Import-Module OneDriveLib.dll
 PS C:\ODTool> Get-ODStatus
 
-StatusString : UpToDate
-LocalPath    : E:\MicrosoftOnedrive\OneDrive - My Company
-UserSID      : S-1-5-21-124000000-708000000-1543000000-802052
-UserName     : CONTOSO\rodneyviana
-ServiceType  : Business1
+LocalPath    : E:\MicrosoftOnedrive\OneDrive - My Company
+UserSID      : S-1-5-21-124000000-708000000-1543000000-802052
+UserName     : CONTOSO\rodneyviana
+DisplayName  : OneDrive - Contoso
+ServiceType  : Business1
+StatusString : Looking for changes
 
 StatusString : UpToDate
-LocalPath    : D:\Onedrive
-UserSID      : S-1-5-21-124000000-708000000-1543000000-802052
-UserName     : CONTOSO\rodneyviana
-ServiceType  : Personal
+LocalPath    : D:\Onedrive
+UserSID      : S-1-5-21-124000000-708000000-1543000000-802052
+DisplayName  : OneDrive - Personal
+UserName     : CONTOSO\rodneyviana
+ServiceType  : Personal
+StatusString : Up To Date
 ```
 
-**Syntax**
+**Syntax:**
+```
+Get-ODStatus [-Type <type-Name>] [-ByPath <path>] [CLSID <guid>]
+             [-IncludeLog] [-Verbose]
+
+Or
+Get-ODStatus -OnDemandOnly [-Type <type-Name>] [-IncludeLog] [-Verbose]
 
 ```
-Get-ODStatus [-ByPath <file-or-folder-path>] [-Type <type-of-service>]
-             [-CLSID <icon-overlay-guid>] [-IncludeLog $true|$false]
+**Where:**
+```
+-Type <type>       Only returns if Service Type matches <type>
+                   Example: Get-ODStatus -Type Personal
 
-(All parameters are optional and normally not used on most cases)
+-ByPath <path>     Only checks a particular folder or file status
+                   Example: Get-ODStatus -Path "$env:OneDrive\docs"
 
-Where:
-    -ByPath <file-or-folder-path> - Test a particular file of folder to seee if it is synchronized
-    -Type <type-of-service> - Filter response by type of service (e.g. Business1 or Personal)
-    -CLSID <icon-overlay-guid> - Test a different type of icon overlay (you may use this to test other services like DropBox
-                                 if know their Guid)
-    -IncludeLog $true|$false - If $true will create a detailed log file on temp path (use $env:Temp in PowerShell to find
-                               the temp folder). The file name starts with OneDriveLib.
+-CLSD <guid>       Verify only a particular GUID (not used normally)
+                   Example: Get-ODStatus -CLSD A0396A93-DC06-4AEF-BEE9-95FFCCAEF20E
+
+-IncludeLog        If present will save a log file on the temp folder
+
+-Verbose           Show verbose information
+
+-OnDemandOnly      Normally On Demand is only tested as a fallback, when
+                   -OnDemandOnly is present it goes directly to 
+                   On Demand status. This may resolve flicker issues
+                  
+```
+
+**Important:**
+
+On Demand Status **ONLY** works if OneDrive icon is visible on the taskbar
 
 Examples:
 
@@ -63,9 +84,11 @@ Get-ODStatus -ByPath "$($env:OneDrive)\DalyReports\"
 
 Save and list the log file:
 
-Get-ODStatus -IncludeLog $true
+Get-ODStatus -IncludeLog
 
 Get-Item -Path "$($env:Temp)\OneDriveLib*"
 
+For On Demand installations:
 
+Get-ODStatus -OnDemandOnly
 ```

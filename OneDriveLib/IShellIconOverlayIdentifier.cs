@@ -1,39 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using OneDriveLib;
 
 namespace Native
 {
 
     public class API
     {
-        [DllImport("ODNative.dll", EntryPoint = "?GetShellInterfaceFromGuid@@YAJPEAHPEA_W1@Z", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(GetStatus.dllName, EntryPoint = "?GetShellInterfaceFromGuid@@YAJPEAHPEA_W1@Z", CallingConvention = CallingConvention.Cdecl)]
         public static extern uint GetShellInterfaceFromGuid(
             [Out,MarshalAs(UnmanagedType.Bool)] out bool IsTrue,
             [In, MarshalAs(UnmanagedType.LPWStr)] string GuidString,
             [In,MarshalAs(UnmanagedType.LPWStr)] string Path);
 
-        [DllImport("ODNative.dll", EntryPoint = "?GetShellInterfaceFromGuid@@YAJPAHPA_W1@Z", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(GetStatus.dllName, EntryPoint = "?GetShellInterfaceFromGuid@@YAJPAHPA_W1@Z", CallingConvention = CallingConvention.Cdecl)]
         public static extern uint GetShellInterfaceFromGuid32(
             [Out, MarshalAs(UnmanagedType.Bool)] out bool IsTrue,
             [In, MarshalAs(UnmanagedType.LPWStr)] string GuidString,
             [In, MarshalAs(UnmanagedType.LPWStr)] string Path);
 
-        [DllImport("ODNative.dll", EntryPoint = "?GetStatusByType@@YAJPEA_W0HPEAH@Z", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(GetStatus.dllName, EntryPoint = "?GetStatusByType@@YAJPEA_W0HPEAH@Z", CallingConvention = CallingConvention.Cdecl)]
         public static extern uint GetStatusByType(
         [In, MarshalAs(UnmanagedType.LPWStr)] string OneDriveType,
         [In, Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder Status,
         [In, MarshalAs(UnmanagedType.I4)] int Size,
         [In, Out, MarshalAs(UnmanagedType.I4)] ref int ActualSize);
 
-        [DllImport("ODNative.dll", EntryPoint = "?GetStatusByType@@YAJPA_W0HPAH@Z", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(GetStatus.dllName, EntryPoint = "?GetStatusByType@@YAJPA_W0HPAH@Z", CallingConvention = CallingConvention.Cdecl)]
         public static extern uint GetStatusByType32(
         [In, MarshalAs(UnmanagedType.LPWStr)] string OneDriveType,
         [In, Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder Status,
         [In, MarshalAs(UnmanagedType.I4)] int Size,
         [In, Out, MarshalAs(UnmanagedType.I4)] ref int ActualSize);
+
+        [DllImport("kernel32", SetLastError = true)]
+        static extern bool FreeLibrary(IntPtr hModule);
+
+        [DllImport("kernel32", SetLastError = true)]
+        static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
+
+        public static bool UnloadModule()
+        {
+            foreach (ProcessModule mod in Process.GetCurrentProcess().Modules)
+            {
+                if (mod.ModuleName.ToLower() == GetStatus.dllName.ToLower())
+                {
+                    FreeLibrary(mod.BaseAddress);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool LoadModuleIfNot()
+        {
+            bool loaded = false;
+            foreach (ProcessModule mod in Process.GetCurrentProcess().Modules)
+            {
+                if (mod.ModuleName.ToLower() == GetStatus.dllName.ToLower())
+                {
+                    loaded = true;
+                    
+                }
+            }
+            if(!loaded)
+            {
+                var result = LoadLibrary(GetStatus.dllName);
+                return (result != IntPtr.Zero);
+            }
+            return true;
+            
+
+        }
 
         const uint CLSCTX_INPROC = 3;
         static public bool IsTrue<T>(string Path)
@@ -72,9 +114,10 @@ namespace Native
 
 #if DEBUG
             OneDriveLib.WriteLog.WriteToFile = true;
-            OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Testing CLSID: {0}, Path: {1}, HR=0x{2:X}", CLSID.ToString("B"), Path, hr));
             //Console.Write("{0}:{1}({2}) ", typeof(T).ToString(), CLSID.ToString("B"), isTrue);
 #endif
+            OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Testing CLSID: {0}, Path: {1}, HR=0x{2:X}", CLSID.ToString("B"), Path, hr));
+
             if (hr == 0)
                 return isTrue;
             else

@@ -18,6 +18,8 @@ namespace OdSyncService
     {
         private static string userSID = null;
 
+        internal static bool OnDemandOnly { get; set; } = false;
+
         private static string UserSID
         {
             get
@@ -34,25 +36,27 @@ namespace OdSyncService
         public ServiceStatus GetStatus(string Path)
         {
 
-
-            if (Native.API.IsTrue<IIconError>(Path))
-                return ServiceStatus.Error;
-            if (Native.API.IsTrue<IIconUpToDate>(Path))
-                return ServiceStatus.UpToDate;
-            if (Native.API.IsTrue<IIconReadOnly>(Path))
-                return ServiceStatus.ReadOnly;
-            if (Native.API.IsTrue<IIconShared>(Path))
-                return ServiceStatus.Shared;
-            if (Native.API.IsTrue<IIconSharedSync>(Path))
-                return ServiceStatus.SharedSync;
-            if (Native.API.IsTrue<IIconSync>(Path))
-                return ServiceStatus.Syncing;
-            if (Native.API.IsTrue<IIconGrooveUpToDate>(Path))
-                return ServiceStatus.UpToDate;
-            if (Native.API.IsTrue<IIconGrooveSync>(Path))
-                return ServiceStatus.Syncing;
-            if (Native.API.IsTrue<IIconGrooveError>(Path))
-                return ServiceStatus.Error;
+            if (!OnDemandOnly)
+            {
+                if (Native.API.IsTrue<IIconError>(Path))
+                    return ServiceStatus.Error;
+                if (Native.API.IsTrue<IIconUpToDate>(Path))
+                    return ServiceStatus.UpToDate;
+                if (Native.API.IsTrue<IIconReadOnly>(Path))
+                    return ServiceStatus.ReadOnly;
+                if (Native.API.IsTrue<IIconShared>(Path))
+                    return ServiceStatus.Shared;
+                if (Native.API.IsTrue<IIconSharedSync>(Path))
+                    return ServiceStatus.SharedSync;
+                if (Native.API.IsTrue<IIconSync>(Path))
+                    return ServiceStatus.Syncing;
+                if (Native.API.IsTrue<IIconGrooveUpToDate>(Path))
+                    return ServiceStatus.UpToDate;
+                if (Native.API.IsTrue<IIconGrooveSync>(Path))
+                    return ServiceStatus.Syncing;
+                if (Native.API.IsTrue<IIconGrooveError>(Path))
+                    return ServiceStatus.Error;
+            }
 
             return ServiceStatus.OnDemandOrUnknown;
         }
