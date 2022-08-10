@@ -99,7 +99,7 @@ namespace OdSyncService
                                         detail.UserName = userName;
                                         detail.UserSID = valueName;
                                         detail.DisplayName = displayName;
-                                        detail.SyncRootId = userKey.Name;
+                                        detail.SyncRootId = subkey;
                                         
                                         string[] parts = userKey.Name.Split('!');
 
@@ -210,6 +210,8 @@ namespace OdSyncService
                     status.NewApiStatus = state.CurrentState;
                     status.StatusString = state.CurrentState == 0 ? "Synced" : state.Label;
                     status.QuotaLabel = state.QuotaLabel;
+                    status.QuotaColor = new QuotaColor(state.IconColorA, state.IconColorR, state.IconColorG, state.IconColorB);
+                    status.IconPath = state.IconUri;
                     status.IsNewApi = true;
                     statuses.Add(status);
                 }

@@ -43,6 +43,11 @@ namespace OdSyncService
             this.G = G;
             this.B = B;
         }
+
+        public override string ToString()
+        {
+            return $"A: {A}, R: {R}, G: {G}, B: {B}";
+        }
     };
 
     public class PathStatus
