@@ -7,7 +7,7 @@
 #include <shellapi.h>
 #include <string>
 #include "psapi.h"
-
+#include "ApiStatus.h"
 
 #pragma region TrayArea
 
@@ -216,5 +216,14 @@ __declspec(dllexport) HRESULT GetStatusByType(LPWSTR OneDriveType, LPWSTR Status
 	std::memcpy(Status, result.c_str(), bytesSize);
 
 	return S_OK;
+}
+
+__declspec(dllexport) HRESULT GetStatusByTypeApi(LPWSTR SyncRootId, OneDriveState* State)
+{
+	OneDriveState stateData = {0};
+	HRESULT hr = getInstanceStatus(SyncRootId, stateData);
+	std::memcpy(State, &stateData, sizeof(OneDriveState));
+	return hr;
+
 }
 

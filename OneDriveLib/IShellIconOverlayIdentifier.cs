@@ -9,8 +9,45 @@ using OneDriveLib;
 namespace Native
 {
 
+
+    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+    public struct OneDriveState
+    {
+        public int CurrentState;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = API.MAX_STATE_LABEL)]
+        public string Label;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = API.MAX_ICON_URI)]
+        public string IconUri;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool isQuotaAvailable;
+        public ulong TotalQuota;
+        public ulong UsedQuota;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = API.MAX_QUOTA_LABEL)]
+        public string QuotaLabel;
+        public byte IconColorA;
+        public byte IconColorR;
+        public byte IconColorG;
+        public byte IconColorB;
+    };
+
+
     public class API
     {
+        public const int MAX_STATE_LABEL = 255;
+        public const int MAX_ICON_URI = 1024;
+        public const int MAX_QUOTA_LABEL = 255;
+        [DllImport(GetStatus.dllName, EntryPoint = "?GetStatusByTypeApi@@YAJPEA_WPEAUOneDriveState@@@Z", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetStatusByTypeApi(
+            [In, MarshalAs(UnmanagedType.LPWStr)] string SyncRootId,
+            ref OneDriveState State
+        );
+
+        [DllImport(GetStatus.dllName, EntryPoint = "?GetStatusByTypeApi@@YAJPA_WPAUOneDriveState@@@Z", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetStatusByTypeApi32(
+            [In, MarshalAs(UnmanagedType.LPWStr)] string SyncRootId,
+            ref OneDriveState State
+        );
+
         [DllImport(GetStatus.dllName, EntryPoint = "?GetShellInterfaceFromGuid@@YAJPEAHPEA_W1@Z", CallingConvention = CallingConvention.Cdecl)]
         public static extern uint GetShellInterfaceFromGuid(
             [Out,MarshalAs(UnmanagedType.Bool)] out bool IsTrue,
@@ -88,6 +125,17 @@ namespace Native
             OneDriveLib.WriteLog.WriteInformationEvent(String.Format("Testing Type: {0} [{1}], Path: {2}: {3}", typeof(T).ToString(), CLSID, Path, isType));
 
             return IsCertainType(Path, CLSID);
+        }
+
+        static public uint GetStateBySyncRootId(string SyncRootId, out OneDriveState State)
+        {
+            State = new OneDriveState();
+            uint hr = 0;
+            if (Marshal.SizeOf(IntPtr.Zero) == 8)
+               hr = GetStatusByTypeApi(SyncRootId, ref State);
+            else
+               hr = GetStatusByTypeApi32(SyncRootId, ref State);
+            return hr;
         }
 
         static public string GetStatusByDisplayName(string DisplayName)

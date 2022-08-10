@@ -99,7 +99,7 @@ namespace OdSyncService
                                         detail.UserName = userName;
                                         detail.UserSID = valueName;
                                         detail.DisplayName = displayName;
-
+                                        detail.SyncRootId = userKey.Name;
                                         
                                         string[] parts = userKey.Name.Split('!');
 
@@ -201,7 +201,19 @@ namespace OdSyncService
 
             foreach (var status in GetStatusInternal())
             {
-                if (status.Status != ServiceStatus.OnDemandOrUnknown)
+                OneDriveState state = new OneDriveState();
+                var hr = API.GetStateBySyncRootId(status.SyncRootId, out state);
+                if(hr == 0)
+                {
+                    status.QuotaUsedBytes = state.UsedQuota;
+                    status.QuotaTotalBytes = state.TotalQuota;
+                    status.NewApiStatus = state.CurrentState;
+                    status.StatusString = state.CurrentState == 0 ? "Synced" : state.Label;
+                    status.QuotaLabel = state.QuotaLabel;
+                    status.IsNewApi = true;
+                    statuses.Add(status);
+                }
+                if (hr != 0 && status.Status != ServiceStatus.OnDemandOrUnknown)
                 {
                     if (status.Status == ServiceStatus.Error)
                     {

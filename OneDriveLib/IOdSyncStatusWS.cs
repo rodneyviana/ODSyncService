@@ -30,6 +30,21 @@ namespace OdSyncService
         OnDemandOrUnknown
     }
 
+    public struct QuotaColor
+    {
+        public byte A;
+        public byte R;
+        public byte G;
+        public byte B;
+        public QuotaColor(byte A, byte R, byte G, byte B)
+        {
+            this.A = A;
+            this.R = R;
+            this.G = G;
+            this.B = B;
+        }
+    };
+
     public class PathStatus
     {
         internal PathStatus(string FilePath, ServiceStatus FileStatus)
@@ -55,6 +70,9 @@ namespace OdSyncService
     public class StatusDetail
     {
         [DataMember]
+        public string SyncRootId;
+
+        [DataMember]
         public string LocalPath;
 
         [DataMember]
@@ -63,8 +81,10 @@ namespace OdSyncService
         [DataMember]
         public string UserName;
 
-
         internal ServiceStatus Status;
+
+        [DataMember]
+        public int NewApiStatus = -1;
 
         [DataMember]
         public string DisplayName;
@@ -74,6 +94,25 @@ namespace OdSyncService
 
         [DataMember]
         public string StatusString;
+
+        [DataMember]
+        public string IconPath;
+
+        [DataMember]
+        public string QuotaLabel;
+
+        [DataMember]
+        public ulong QuotaTotalBytes = 0;
+
+        [DataMember]
+        public ulong QuotaUsedBytes = 0;
+
+        [DataMember]
+        public QuotaColor QuotaColor = new QuotaColor(0, 0, 0, 0);
+
+        [DataMember]
+        public bool IsNewApi = false;
+
         public List<PathStatus> GetUnsynchedFiles(bool StopAtFirst = true)
         {
             string[] files = Directory.GetFiles(LocalPath, "*.*", SearchOption.AllDirectories);
