@@ -16,7 +16,7 @@ namespace OneDrive.Logging {
             }
         }
         public static bool ShouldLog { get; set; } = false;
-        public static void AppendToFile(EventLogEntryType Severity, string Message) {
+        public static void AppendToFile(System.Diagnostics.EventLogEntryType Severity, string Message) {
             AppendToFile(String.Format("{0}\t{1}\t{2}",
                 DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss"),
                 Severity,
@@ -30,12 +30,11 @@ namespace OneDrive.Logging {
             bool myLock = System.Threading.Monitor.TryEnter(writeLock, 100);
             if (myLock) {
                 try {
-                    using (FileStream stream = new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
-                        stream.Position = stream.Length;
-                        stream.Write(RawBytes, 0, RawBytes.Length);
-                        stream.WriteByte(13);
-                        stream.WriteByte(10);
-                    }
+                    using FileStream stream = new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                    stream.Position = stream.Length;
+                    stream.Write(RawBytes, 0, RawBytes.Length);
+                    stream.WriteByte(13);
+                    stream.WriteByte(10);
                 } catch (Exception ex) {
                     string str = string.Format("Unable to create log. Type: {0} Message: {1}\nStack:{2}", ex, ex.Message, ex.StackTrace);
                     Debug.WriteLine(str);

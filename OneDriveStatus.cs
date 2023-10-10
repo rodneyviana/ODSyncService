@@ -13,17 +13,11 @@ namespace OneDrive {
         public string? Type { get; set; } = null;
         public bool IncludeLog { get; set; } = false;
         public bool onDemandOnly { get; set; } = false;
-        public bool ShowDllPath { get; set; } = false;
 
-        internal const string dllName = "ODNative.dll";
-        static string? dllPath = null;
-        static string? originalPath = null;
-
-        public OneDriveStatus(string? Type = null, bool IncludeLog = false, bool onDemandOnly = false, bool ShowDllPath = false) {
+        public OneDriveStatus(string? Type = null, bool IncludeLog = false, bool onDemandOnly = false) {
             this.Type = Type;
             this.IncludeLog = IncludeLog;
             this.onDemandOnly = onDemandOnly;
-            this.ShowDllPath = ShowDllPath;
         }
 
         private void BasicChecks() {
@@ -38,13 +32,6 @@ namespace OneDrive {
             if (onDemandOnly) {
                 Debug.WriteLine("On Demand Only check");
                 WriteLog.WriteInformationEvent("On Demand Only option selected");
-            }
-            if (dllPath is null) {
-                CopyDLL();
-            }
-            if (ShowDllPath) {
-                Debug.WriteLine("Show DLL folder is enabled");
-                Debug.WriteLine($"The temporary DLL path is '{Path.Combine(dllPath, dllName)}'");
             }
         }
         public ServiceStatus GetStatus (string TargetPath) {
@@ -72,36 +59,6 @@ namespace OneDrive {
                 statuses.Add(status);
             }
             return statuses;
-        }
-        private static void CopyDLL() {
-            dllPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            try {
-                Directory.CreateDirectory(dllPath);
-            } catch (Exception ex) {
-                throw new Exception(String.Format("Unable to generate folder for support files at {0}\n{1}", dllPath, ex.ToString()));
-            }
-            byte[] streamBytes;
-            if (Marshal.SizeOf(new IntPtr()) == 8) // 64 bits
-            {
-                streamBytes = Properties.Resources.ODNative64;
-            } else {
-                streamBytes = Properties.Resources.ODNative32;
-            }
-            try {
-                using (Stream fileStream = File.OpenWrite(Path.Combine(dllPath, dllName))) {
-                    fileStream.Write(streamBytes, 0, streamBytes.Length);
-                }
-            } catch (Exception ex) {
-                string tmpStr = dllPath;
-                dllPath = null;
-                throw new Exception(String.Format("Unable to generate support files at {0}\n{1}", tmpStr, ex.ToString()));
-            }
-            // Set up search path DLL
-            string path = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
-            if (originalPath == null)
-                originalPath = path;
-            path += ";" + dllPath;
-            Environment.SetEnvironmentVariable("PATH", path);
         }
     }
 }
