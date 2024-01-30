@@ -1,3 +1,8 @@
+# This version is not compatible with Windows 11
+Use this version instead (should also work with Windows 10):
+https://github.com/rodneyviana/ODSyncUtil/
+
+
 # Now including support for On Demand!
 
 **Watch this video to get started**
